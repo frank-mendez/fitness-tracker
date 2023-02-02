@@ -32,7 +32,13 @@
       <mat-error>Minimum of 8 characters</mat-error>
     </mat-form-field>
     <mat-form-field class="input">
-      <input matInput placeholder="Enter Birthdate" [matDatepicker]="picker" />
+      <input
+        matInput
+        placeholder="Enter Birthdate"
+        [matDatepicker]="picker"
+        ngModel
+        name="birthday"
+      />
       <mat-hint>MM/DD/YYYY</mat-hint>
       <mat-datepicker-toggle
         matIconSuffix
@@ -40,7 +46,16 @@
       ></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
-    <mat-checkbox color="primary">Agree to Terms and Conditions</mat-checkbox>
-    <button type="submit" mat-raised-button color="primary">Submit</button>
+    <mat-checkbox ngModel name="agree" required color="primary"
+      >Agree to Terms and Conditions</mat-checkbox
+    >
+    <button
+      type="submit"
+      mat-raised-button
+      color="primary"
+      [disabled]="f.invalid"
+    >
+      Submit
+    </button>
   </form>
 </section>
