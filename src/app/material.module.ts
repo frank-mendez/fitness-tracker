@@ -11,6 +11,9 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { LayoutModule } from '@angular/cdk/layout';
 import { MatListModule } from '@angular/material/list';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatCardModule } from '@angular/material/card';
+
 @NgModule({
   imports: [
     MatSlideToggleModule,
@@ -25,6 +28,8 @@ import { MatListModule } from '@angular/material/list';
     MatIconModule,
     LayoutModule,
     MatListModule,
+    MatTabsModule,
+    MatCardModule,
   ],
   exports: [
     MatSlideToggleModule,
@@ -39,6 +44,8 @@ import { MatListModule } from '@angular/material/list';
     MatIconModule,
     LayoutModule,
     MatListModule,
+    MatTabsModule,
+    MatCardModule,
   ],
 })
 export class MaterialModule {}
