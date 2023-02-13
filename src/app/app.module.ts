@@ -12,10 +12,11 @@ import { CurrentComponent } from './training/current/current.component';
 import { NewComponent } from './training/new/new.component';
 import { PastComponent } from './training/past/past.component';
 import { WelcomeComponent } from './welcome/welcome.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavComponent } from './navigation/sidenav/sidenav.component';
 import { StopTrainingComponent } from './training/current/stop-training.component';
+import { AuthService } from './auth/auth.service';
 
 @NgModule({
   declarations: [
@@ -37,8 +38,9 @@ import { StopTrainingComponent } from './training/current/stop-training.componen
     BrowserAnimationsModule,
     MaterialModule,
     FormsModule,
+    ReactiveFormsModule,
   ],
-  providers: [],
+  providers: [AuthService],
   bootstrap: [AppComponent, StopTrainingComponent],
 })
 export class AppModule {}
