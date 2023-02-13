@@ -1,3 +1,4 @@
+import { ExerciseService } from './training/exercise.service';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -40,7 +41,7 @@ import { AuthService } from './auth/auth.service';
     FormsModule,
     ReactiveFormsModule,
   ],
-  providers: [AuthService],
+  providers: [AuthService, ExerciseService],
   bootstrap: [AppComponent, StopTrainingComponent],
 })
 export class AppModule {}
