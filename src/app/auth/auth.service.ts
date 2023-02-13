@@ -2,9 +2,14 @@ import { Subject } from 'rxjs';
 import { AuthData } from './auth-data.model';
 import { User } from './user.model';
 import { v4 as uuid } from 'uuid';
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 
+@Injectable()
 export class AuthService {
   authChange = new Subject<boolean>();
+
+  constructor(private router: Router) {}
 
   private user: User | null = null;
 
@@ -14,7 +19,7 @@ export class AuthService {
       userId: uuid(),
     };
 
-    this.authChange.next(true);
+    this.authSuccessful();
   }
 
   login(authData: AuthData) {
@@ -22,12 +27,14 @@ export class AuthService {
       email: authData.email,
       userId: uuid(),
     };
-    this.authChange.next(true);
+
+    this.authSuccessful();
   }
 
   logout() {
     this.user = null;
     this.authChange.next(false);
+    this.router.navigate(['/login']);
   }
 
   getUser() {
@@ -36,5 +43,10 @@ export class AuthService {
 
   isAuth() {
     return this.user !== null;
+  }
+
+  authSuccessful() {
+    this.authChange.next(true);
+    this.router.navigate(['/training']);
   }
 }
