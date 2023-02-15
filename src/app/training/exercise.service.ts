@@ -8,7 +8,13 @@ export class ExerciseService {
     { id: 'burpees', name: 'Burpees', duration: 60, calories: 8 },
   ];
 
+  private runningExercise: Exercise
+
   getAvailableExercises() {
     return this.availableExercises.slice();
+  }
+
+  startExercise(selectedId: string) {
+    const selectedExercise = this.availableExercises.find(exercise => exercise.id === selectedId)
   }
 }
