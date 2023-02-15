@@ -44,7 +44,6 @@ export class CurrentComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((data) => {
-      console.log('data', data);
       if (data) {
         this.exerciseService.cancelRunningExercise(this.progress);
       } else {
