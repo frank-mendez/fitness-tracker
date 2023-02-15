@@ -22,8 +22,13 @@
           </mat-select>
         </mat-form-field>
       </mat-card-content>
-      <mat-card-actions>
-        <button [disabled]="f.invalid" type="submit" mat-button color="primary">
+      <mat-card-actions class="actions">
+        <button
+          [disabled]="f.invalid"
+          type="submit"
+          mat-raised-button
+          color="accent"
+        >
           Start
         </button>
       </mat-card-actions>

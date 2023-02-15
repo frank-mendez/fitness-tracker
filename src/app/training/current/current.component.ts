@@ -29,6 +29,7 @@ export class CurrentComponent implements OnInit {
     this.timer = setInterval(() => {
       this.progress = this.progress + 1;
       if (this.progress >= 100) {
+        this.exerciseService.completeRunningExercise();
         clearInterval(this.timer);
       }
     }, step);
@@ -45,7 +46,7 @@ export class CurrentComponent implements OnInit {
     dialogRef.afterClosed().subscribe((data) => {
       console.log('data', data);
       if (data) {
-        this.trainingExit.emit();
+        this.exerciseService.cancelRunningExercise(this.progress);
       } else {
         this.startOrResumeTimer();
       }
