@@ -1,20 +1,41 @@
-import { Subject } from 'rxjs';
+import { Injectable } from '@angular/core';
+import {
+  AngularFirestore,
+  AngularFirestoreCollection,
+} from '@angular/fire/compat/firestore';
+import { Observable, Subject } from 'rxjs';
 import { Exercise } from './exercise.model';
+import { map } from 'rxjs/operators';
 
+@Injectable()
 export class ExerciseService {
   changedExercise = new Subject<Exercise>();
-  private availableExercises: Exercise[] = [
-    { id: 'crunches', name: 'Crunches', duration: 30, calories: 8 },
-    { id: 'touch-toes', name: 'Touch Toes', duration: 180, calories: 15 },
-    { id: 'side-lunges', name: 'Side Lunges', duration: 120, calories: 18 },
-    { id: 'burpees', name: 'Burpees', duration: 60, calories: 8 },
-  ];
-
+  changedExercises = new Subject<Exercise[]>();
+  private availableExercises: Exercise[] = [];
   private runningExercise: Exercise;
-  private exercises: Exercise[] = [];
+  exercisesCollection: AngularFirestoreCollection<Exercise>;
+  exercises: Observable<Exercise[]>;
 
-  getAvailableExercises() {
-    return this.availableExercises.slice();
+  constructor(private firestore: AngularFirestore) {}
+
+  fetchAvailableExercises() {
+    this.exercisesCollection =
+      this.firestore.collection<Exercise>('availableExercises');
+    this.exercises = this.exercisesCollection.snapshotChanges().pipe(
+      map((docArray) => {
+        return docArray.map((doc) => {
+          return {
+            id: doc.payload.doc.id,
+            ...doc.payload.doc.data(),
+          };
+        });
+      })
+    );
+
+    this.exercises.subscribe((exercises) => {
+      this.availableExercises = exercises;
+      this.changedExercises.next([...this.availableExercises]);
+    });
   }
 
   startExercise(selectedId: string) {
@@ -27,23 +48,11 @@ export class ExerciseService {
   }
 
   completeRunningExercise() {
-    this.exercises.push({
-      ...this.runningExercise,
-      date: new Date(),
-      state: 'completed',
-    });
     this.runningExercise = null;
     this.changedExercise.next(null);
   }
 
   cancelRunningExercise(progress: number) {
-    this.exercises.push({
-      ...this.runningExercise,
-      duration: this.runningExercise.duration * (progress / 100),
-      calories: this.runningExercise.calories * (progress / 100),
-      date: new Date(),
-      state: 'cancelled',
-    });
     this.runningExercise = null;
     this.changedExercise.next(null);
   }
@@ -53,6 +62,6 @@ export class ExerciseService {
   }
 
   getAllExercises() {
-    return this.exercises.slice();
+    return [];
   }
 }
