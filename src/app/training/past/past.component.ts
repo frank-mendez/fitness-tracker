@@ -24,4 +24,10 @@ export class PastComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
   }
+
+  hanldeFilter(event: Event) {
+    const { target } = event;
+    const value = (target as HTMLInputElement).value;
+    this.dataSource.filter = value.trim().toLowerCase();
+  }
 }
