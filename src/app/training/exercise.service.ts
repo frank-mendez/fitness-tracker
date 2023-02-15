@@ -1,6 +1,8 @@
+import { Subject } from 'rxjs';
 import { Exercise } from './exercise.model';
 
 export class ExerciseService {
+  changedExercise = new Subject<Exercise>();
   private availableExercises: Exercise[] = [
     { id: 'crunches', name: 'Crunches', duration: 30, calories: 8 },
     { id: 'touch-toes', name: 'Touch Toes', duration: 180, calories: 15 },
@@ -8,13 +10,22 @@ export class ExerciseService {
     { id: 'burpees', name: 'Burpees', duration: 60, calories: 8 },
   ];
 
-  private runningExercise: Exercise
+  private runningExercise: Exercise;
 
   getAvailableExercises() {
     return this.availableExercises.slice();
   }
 
   startExercise(selectedId: string) {
-    const selectedExercise = this.availableExercises.find(exercise => exercise.id === selectedId)
+    const selectedExercise = this.availableExercises.find(
+      (exercise) => exercise.id === selectedId
+    );
+
+    this.runningExercise = selectedExercise;
+    this.changedExercise.next({ ...this.runningExercise });
+  }
+
+  getRunningExercise() {
+    return { ...this.runningExercise };
   }
 }

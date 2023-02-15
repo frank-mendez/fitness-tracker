@@ -2,7 +2,11 @@
   <button *ngIf="show" mat-icon-button (click)="onToggleHandler()">
     <mat-icon>menu</mat-icon>
   </button>
-  <div><a routerLink="/">LOGO</a></div>
+  <div>
+    <a routerLink="/">
+      <img class="logo" src="../../../assets/logo.png" />
+    </a>
+  </div>
   <div class="nav" *ngIf="!show">
     <ul class="navigation-items">
       <li *ngIf="!isAuth"><a routerLink="/signup">Signup</a></li>
