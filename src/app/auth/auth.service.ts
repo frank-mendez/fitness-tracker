@@ -1,11 +1,11 @@
 import { Subject } from 'rxjs';
 import { AuthData } from './auth-data.model';
-import { User } from './user.model';
-import { v4 as uuid } from 'uuid';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ExerciseService } from '../training/exercise.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { UIService } from '../shared/ui.service';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +15,9 @@ export class AuthService {
   constructor(
     private router: Router,
     private auth: AngularFireAuth,
-    private exerciseService: ExerciseService
+    private exerciseService: ExerciseService,
+    private snackBar: MatSnackBar,
+    private uiService: UIService
   ) {}
 
   initAuthListener() {
@@ -33,27 +35,31 @@ export class AuthService {
   }
 
   registerUser(authData: AuthData) {
+    this.uiService.loadingStateChanged.next(true);
     this.auth
       .createUserWithEmailAndPassword(authData.email, authData.password)
       .then((result) => {
         console.log('result', result);
+        this.uiService.loadingStateChanged.next(false);
         this.isAuthenticated = true;
       })
       .catch((error) => {
-        this.isAuthenticated = false;
-        console.log('error', error);
+        this.uiService.loadingStateChanged.next(false);
+        this.snackBar.open(error.message, null, { duration: 3000 });
       });
   }
 
   login(authData: AuthData) {
+    this.uiService.loadingStateChanged.next(true);
     this.auth
       .signInWithEmailAndPassword(authData.email, authData.password)
-      .then((result) => {
-        console.log('result', result);
+      .then(() => {
+        this.uiService.loadingStateChanged.next(false);
         this.isAuthenticated = true;
       })
       .catch((error) => {
-        console.log('error', error);
+        this.uiService.loadingStateChanged.next(false);
+        this.snackBar.open(error.message, null, { duration: 3000 });
         this.isAuthenticated = false;
       });
   }

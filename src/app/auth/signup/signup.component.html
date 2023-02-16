@@ -50,6 +50,7 @@
       >Agree to Terms and Conditions</mat-checkbox
     >
     <button
+      *ngIf="!isLoading"
       type="submit"
       mat-raised-button
       color="primary"
@@ -57,5 +58,6 @@
     >
       Submit
     </button>
+    <mat-spinner *ngIf="isLoading" diameter="25"></mat-spinner>
   </form>
 </section>

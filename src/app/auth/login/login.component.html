@@ -25,8 +25,11 @@
       mat-raised-button
       color="primary"
       [disabled]="loginForm.invalid"
+      *ngIf="!isLoading"
     >
       Submit
     </button>
+
+    <mat-spinner *ngIf="isLoading" diameter="25"></mat-spinner>
   </form>
 </section>
