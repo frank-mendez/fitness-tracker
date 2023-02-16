@@ -6,6 +6,7 @@ import {
 import { Observable, Subject, Subscription } from 'rxjs';
 import { Exercise } from './exercise.model';
 import { map } from 'rxjs/operators';
+import { UIService } from '../shared/ui.service';
 
 @Injectable()
 export class ExerciseService {
@@ -20,7 +21,10 @@ export class ExerciseService {
   private runningExercise: Exercise;
   private exercisesSubscriptions: Subscription[] = [];
 
-  constructor(private firestore: AngularFirestore) {
+  constructor(
+    private firestore: AngularFirestore,
+    private uiService: UIService
+  ) {
     this.exercisesCollection =
       this.firestore.collection<Exercise>('availableExercises');
     this.finishedExercisesCollection =
@@ -28,6 +32,7 @@ export class ExerciseService {
   }
 
   fetchAvailableExercises() {
+    this.uiService.loadingStateChanged.next(true);
     this.exercises = this.exercisesCollection.snapshotChanges().pipe(
       map((docArray) => {
         return docArray.map((doc) => {
@@ -40,10 +45,17 @@ export class ExerciseService {
     );
 
     this.exercisesSubscriptions.push(
-      this.exercises.subscribe((exercises) => {
-        this.availableExercises = exercises;
-        this.changedExercises.next([...this.availableExercises]);
-      })
+      this.exercises.subscribe(
+        (exercises) => {
+          this.availableExercises = exercises;
+          this.changedExercises.next([...this.availableExercises]);
+          this.uiService.loadingStateChanged.next(false);
+        },
+        (error) => {
+          this.uiService.loadingStateChanged.next(false);
+          this.uiService.showSnackBar(error.message, null, 3000);
+        }
+      )
     );
   }
 
