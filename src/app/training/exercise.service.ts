@@ -16,11 +16,12 @@ export class ExerciseService {
   exercisesCollection: AngularFirestoreCollection<Exercise>;
   exercises: Observable<Exercise[]>;
 
-  constructor(private firestore: AngularFirestore) {}
-
-  fetchAvailableExercises() {
+  constructor(private firestore: AngularFirestore) {
     this.exercisesCollection =
       this.firestore.collection<Exercise>('availableExercises');
+  }
+
+  fetchAvailableExercises() {
     this.exercises = this.exercisesCollection.snapshotChanges().pipe(
       map((docArray) => {
         return docArray.map((doc) => {
@@ -48,11 +49,23 @@ export class ExerciseService {
   }
 
   completeRunningExercise() {
+    this.addDataToDb({
+      ...this.runningExercise,
+      date: new Date(),
+      state: 'completed',
+    });
     this.runningExercise = null;
     this.changedExercise.next(null);
   }
 
   cancelRunningExercise(progress: number) {
+    this.addDataToDb({
+      ...this.runningExercise,
+      duration: this.runningExercise.duration * (progress / 100),
+      calories: this.runningExercise.calories * (progress / 100),
+      date: new Date(),
+      state: 'cancelled',
+    });
     this.runningExercise = null;
     this.changedExercise.next(null);
   }
@@ -63,5 +76,9 @@ export class ExerciseService {
 
   getAllExercises() {
     return [];
+  }
+
+  private addDataToDb(exercise: Exercise) {
+    this.firestore.collection('finishedExercises').add(exercise);
   }
 }
