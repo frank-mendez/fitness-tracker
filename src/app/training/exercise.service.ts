@@ -3,7 +3,7 @@ import {
   AngularFirestore,
   AngularFirestoreCollection,
 } from '@angular/fire/compat/firestore';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { Exercise } from './exercise.model';
 import { map } from 'rxjs/operators';
 
@@ -12,11 +12,13 @@ export class ExerciseService {
   changedExercise = new Subject<Exercise>();
   changedExercises = new Subject<Exercise[]>();
   finishedExercisesChanged = new Subject<Exercise[]>();
-  private availableExercises: Exercise[] = [];
-  private runningExercise: Exercise;
   exercisesCollection: AngularFirestoreCollection<Exercise>;
   finishedExercisesCollection: AngularFirestoreCollection<Exercise>;
   exercises: Observable<Exercise[]>;
+
+  private availableExercises: Exercise[] = [];
+  private runningExercise: Exercise;
+  private exercisesSubscriptions: Subscription[] = [];
 
   constructor(private firestore: AngularFirestore) {
     this.exercisesCollection =
@@ -37,10 +39,12 @@ export class ExerciseService {
       })
     );
 
-    this.exercises.subscribe((exercises) => {
-      this.availableExercises = exercises;
-      this.changedExercises.next([...this.availableExercises]);
-    });
+    this.exercisesSubscriptions.push(
+      this.exercises.subscribe((exercises) => {
+        this.availableExercises = exercises;
+        this.changedExercises.next([...this.availableExercises]);
+      })
+    );
   }
 
   startExercise(selectedId: string) {
@@ -79,9 +83,15 @@ export class ExerciseService {
   }
 
   fetchCompletedOrCancelledExercises() {
-    this.finishedExercisesCollection.valueChanges().subscribe((exercises) => {
-      this.finishedExercisesChanged.next(exercises);
-    });
+    this.exercisesSubscriptions.push(
+      this.finishedExercisesCollection.valueChanges().subscribe((exercises) => {
+        this.finishedExercisesChanged.next(exercises);
+      })
+    );
+  }
+
+  cancelExercisesSubscriptions() {
+    this.exercisesSubscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   private addDataToDb(exercise: Exercise) {
