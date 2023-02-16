@@ -11,14 +11,18 @@ import { map } from 'rxjs/operators';
 export class ExerciseService {
   changedExercise = new Subject<Exercise>();
   changedExercises = new Subject<Exercise[]>();
+  finishedExercisesChanged = new Subject<Exercise[]>();
   private availableExercises: Exercise[] = [];
   private runningExercise: Exercise;
   exercisesCollection: AngularFirestoreCollection<Exercise>;
+  finishedExercisesCollection: AngularFirestoreCollection<Exercise>;
   exercises: Observable<Exercise[]>;
 
   constructor(private firestore: AngularFirestore) {
     this.exercisesCollection =
       this.firestore.collection<Exercise>('availableExercises');
+    this.finishedExercisesCollection =
+      this.firestore.collection<Exercise>('finishedExercises');
   }
 
   fetchAvailableExercises() {
@@ -74,8 +78,10 @@ export class ExerciseService {
     return { ...this.runningExercise };
   }
 
-  getAllExercises() {
-    return [];
+  fetchCompletedOrCancelledExercises() {
+    this.finishedExercisesCollection.valueChanges().subscribe((exercises) => {
+      this.finishedExercisesChanged.next(exercises);
+    });
   }
 
   private addDataToDb(exercise: Exercise) {
