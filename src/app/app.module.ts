@@ -6,12 +6,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
-import { SignupComponent } from './auth/signup/signup.component';
-import { LoginComponent } from './auth/login/login.component';
-import { TrainingComponent } from './training/training.component';
-import { CurrentComponent } from './training/current/current.component';
-import { NewComponent } from './training/new/new.component';
-import { PastComponent } from './training/past/past.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HeaderComponent } from './navigation/header/header.component';
@@ -23,20 +17,16 @@ import { environment } from '../environment/environment';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { UIService } from './shared/ui.service';
+import { AuthModule } from './auth/auth.module';
+import { TrainingModule } from './training/training.module';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    SignupComponent,
-    LoginComponent,
-    TrainingComponent,
-    CurrentComponent,
-    NewComponent,
-    PastComponent,
     WelcomeComponent,
     HeaderComponent,
     SidenavComponent,
-    StopTrainingComponent,
   ],
   imports: [
     BrowserModule,
@@ -48,6 +38,9 @@ import { UIService } from './shared/ui.service';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,
+    AuthModule,
+    TrainingModule,
+    SharedModule,
   ],
   providers: [AuthService, ExerciseService, UIService],
   bootstrap: [AppComponent],
